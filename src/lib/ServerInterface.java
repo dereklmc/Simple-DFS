@@ -1,4 +1,7 @@
+package lib;
+
 import java.rmi.*;
+
 
 public interface ServerInterface extends Remote {
     public FileContents download( String client, String filename, String mode )
