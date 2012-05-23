@@ -1,4 +1,4 @@
-package dfs;
+package server;
 
 import java.rmi.*;
 
