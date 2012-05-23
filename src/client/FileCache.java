@@ -15,4 +15,9 @@ public class FileCache {
 		
 	}
 
+	public static FileCache getCache() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

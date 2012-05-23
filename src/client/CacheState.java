@@ -12,36 +12,56 @@ public enum CacheState {
 	INVALID {
 		@Override
 		public CacheState readFile(String fileName, FileCache cache) {
-			FileContents contents = openRemoteFile(fileName, "r");
-			cache.putFile(fileName, contents);
+			try {
+				downloadFile(fileName, "r");
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NotBoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return READ_SHARED;
 		}
 
 		@Override
 		public CacheState writeFile(String fileName, FileCache cache) {
-			FileContents contents = openRemoteFile(fileName, "w");
-			cache.putFile(fileName, contents);
+			try {
+				downloadFile(fileName, "w");
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NotBoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return WRITE_OWNED;
 		}
 
 		@Override
 		public CacheState replaceFile() {
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 
 		@Override
 		public CacheState invalidateFile() {
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 
 		@Override
 		public CacheState completeSession() {
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 
 		@Override
 		public CacheState writeBack() {
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 	},
 	READ_SHARED {
@@ -53,7 +73,18 @@ public enum CacheState {
 
 		@Override
 		public CacheState writeFile(String fileName, FileCache cache) {
-			FileContents file = openRemoteFile(fileName, "w");
+			try {
+				downloadFile(fileName, "w");
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NotBoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return WRITE_OWNED;
 		}
 
@@ -72,13 +103,13 @@ public enum CacheState {
 		@Override
 		public CacheState completeSession() {
 			// TODO Auto-generated method stub
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 
 		@Override
 		public CacheState writeBack() {
 			// TODO Auto-generated method stub
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 	},
 	WRITE_OWNED {
@@ -103,13 +134,13 @@ public enum CacheState {
 		@Override
 		public CacheState invalidateFile() {
 			// TODO Auto-generated method stub
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 
 		@Override
 		public CacheState completeSession() {
 			// TODO Auto-generated method stub
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 
 		@Override
@@ -122,25 +153,25 @@ public enum CacheState {
 		@Override
 		public CacheState readFile(String fileName, FileCache cache) {
 			// TODO Auto-generated method stub
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 
 		@Override
 		public CacheState writeFile(String fileName, FileCache cache) {
 			// TODO Auto-generated method stub
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 
 		@Override
 		public CacheState replaceFile() {
 			// TODO Auto-generated method stub
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 
 		@Override
 		public CacheState invalidateFile() {
 			// TODO Auto-generated method stub
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 
 		@Override
@@ -152,9 +183,19 @@ public enum CacheState {
 		@Override
 		public CacheState writeBack() {
 			// TODO Auto-generated method stub
-			throw new IllegalStateException();
+			throw new IllegalStateTransistionException();
 		}
 	};
+	
+	public static class IllegalStateTransistionException extends UnsupportedOperationException {
+		
+	};
+	
+	private FileCache cache;
+
+	private CacheState() {
+		cache = FileCache.getCache();
+	}
 
 	public abstract CacheState readFile(String fileName, FileCache cache);
 
@@ -176,9 +217,10 @@ public enum CacheState {
 	 * @throws MalformedURLException
 	 * @throws RemoteException
 	 */
-	public FileContents openRemoteFile(String fileName, String mode) throws NotBoundException,
+	public void downloadFile(String fileName, String mode) throws NotBoundException,
 			MalformedURLException, RemoteException {
 		ServerInterface dfsServer = (ServerInterface) Naming.lookup("");
-		return dfsServer.download("", fileName, mode);
+		FileContents contents = dfsServer.download("", fileName, mode);
+		cache.putFile(fileName, contents);
 	}
 }
