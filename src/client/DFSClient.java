@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
-import lib.*;
+import lib.ClientInterface;
 
 public class DFSClient implements ClientInterface {
 
@@ -14,13 +14,11 @@ public class DFSClient implements ClientInterface {
 
 	}
 
-	@Override
 	public boolean invalidate() throws RemoteException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public boolean writeback() throws RemoteException {
 		// TODO Auto-generated method stub
 		return false;
@@ -52,7 +50,7 @@ public class DFSClient implements ClientInterface {
 		 * fileName);
 		 */
 		try {
-			String fileName = "/home/derek/Dev/repos/Simple-DFS/hello-world.txt";
+			String fileName = "hello-world.txt";
 			editFile(fileName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -69,8 +67,10 @@ public class DFSClient implements ClientInterface {
 	 * @throws InterruptedException
 	 */
 	public static void editFile(String fileName) throws IOException, InterruptedException {
-		String[] command = { "sh", "-c", "vim " + fileName + " </dev/tty >/dev/tty" };
+		String[] command = { "sh", "-c", "emacs -nw " + fileName + " </dev/tty >/dev/tty" };
 		Process p = Runtime.getRuntime().exec(command);
-		p.waitFor();
+		Thread.sleep(5000);
+		p.destroy();
+		//p.waitFor();
 	}
 }
