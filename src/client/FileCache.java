@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
+import lib.AccessMode;
 import lib.FileContents;
 import lib.ServerInterface;
 

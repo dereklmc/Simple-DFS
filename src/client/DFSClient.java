@@ -6,7 +6,9 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import lib.AccessMode;
 import lib.ClientInterface;
+import lib.Prompter;
 import lib.ServerInterface;
 
 public class DFSClient implements ClientInterface {
