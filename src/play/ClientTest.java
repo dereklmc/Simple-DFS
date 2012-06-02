@@ -49,7 +49,7 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 			switch (methodChoice) {
 			case 1:
 				int accessChoice = input.promptChoice("Open file in mode", new String[] {"read", "write"});
-				server.download(localAddress, "testfile.txt", accessChoice == 0 ? "r" : "w");
+				server.download(localAddress, "testfile.txt", accessChoice == 1 ? "r" : "w");
 				break;
 			case 2:
 				server.upload(localAddress, "testfile.txt", null);
