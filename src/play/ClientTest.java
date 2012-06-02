@@ -38,12 +38,16 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 	
 	public boolean uploadChanges() throws RemoteException {
 		if (recievedWriteback) {
-			System.out.println("Attempting to upload file...");
-			boolean result = server.upload(localAddress, "testfile.txt", null);
+			boolean result = uploadCurrent();
 			recievedWriteback = false;
 			return result;
 		}
 		return false;
+	}
+
+	public boolean uploadCurrent() throws RemoteException {
+		System.out.println("Attempting to upload file...");
+		return server.upload(localAddress, "testfile.txt", null);
 	}
 
 	public static void main(String[] args) throws IOException, NotBoundException {
@@ -60,8 +64,10 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 		
 		while (true) {
 			test.uploadChanges();
-			if (input.ask("Do you want to exit?"))
+			if (input.ask("Do you want to exit?")) {
+				test.uploadCurrent();
 				System.exit(0);
+			}
 			test.uploadChanges();
 			int accessChoice = input.promptChoice("Open file in mode", new String[] {"read", "write"});
 			server.download(localAddress, "testfile.txt", accessChoice == 1 ? "r" : "w");

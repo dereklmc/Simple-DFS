@@ -6,6 +6,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import lib.ClientInterface;
@@ -71,8 +72,8 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 			if (mode.equals("r")) {
 				readers.add(client);
 			} else {
-				writebackClient(owner);
 				state = CacheState.OWNERSHIP_CHANGED;
+				writebackClient(owner);
 			}
 			break;
 		case OWNERSHIP_CHANGED:
@@ -117,6 +118,23 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 		System.out.println(String.format(
 				"Recieved Upload request from %s for file \"%s\".", client,
 				filename));
+		printState();
+		for (Iterator<String> iterator = readers.iterator(); iterator.hasNext();) {
+			String reader = iterator.next();
+			System.out.println("Invalidating reader <" + reader + ">");
+			iterator.remove();
+		}
+		switch (state) {
+		case WRITE_SHARED:
+			state = CacheState.NOT_SHARED;
+			break;
+		case OWNERSHIP_CHANGED:
+			state = CacheState.WRITE_SHARED;
+			break;
+		default:
+			break;
+		}
+		printState();
 		return false;
 	}
 
