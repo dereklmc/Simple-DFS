@@ -27,7 +27,9 @@ public class Prompter {
 		waitingForInput = true;
 		String in = console.nextLine();
 		waitingForInput = false;
-		notifyAll();
+		synchronized (this) {			
+			notifyAll();
+		}
 		return in;
 	}
 	

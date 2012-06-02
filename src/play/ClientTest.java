@@ -12,6 +12,10 @@ import lib.ServerInterface;
 
 public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Prompter input;
 
 	public ClientTest(Prompter input) throws RemoteException {
@@ -27,12 +31,14 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 
 	@Override
 	public boolean writeback() throws RemoteException {
+		synchronized (input) {
 		while (input.isWaitingForInput()) {
 			try {
 				input.wait();
 			} catch (InterruptedException e) {
 				break;
 			}
+		}
 		}
 		System.out.println("Recieved Writeback request!");
 		return false;
