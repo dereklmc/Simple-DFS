@@ -71,6 +71,7 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 			test.uploadChanges();
 			int accessChoice = input.promptChoice("Open file in mode", new String[] {"read", "write"});
 			server.download(localAddress, "testfile.txt", accessChoice == 1 ? "r" : "w");
+			System.out.println("Downloaded file!");
 			test.uploadChanges();
 		}
 	}

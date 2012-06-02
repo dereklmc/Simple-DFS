@@ -71,19 +71,30 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 					state = CacheState.WRITE_SHARED;
 				}
 				break;
+			case OWNERSHIP_CHANGED:
+				if (mode.equals("r")) {
+					readers.add(client);
+					break;
+				} else {
+					// TODO
+					synchronized (this) {
+						try {
+							while (state == CacheState.OWNERSHIP_CHANGED) {
+								wait();
+							}
+						} catch (InterruptedException e) {
+							RemoteException re = new RemoteException();
+							re.initCause(e);
+							throw re;
+						}
+					}
+				}
 			case WRITE_SHARED:
 				if (mode.equals("r")) {
 					readers.add(client);
 				} else {
 					state = CacheState.OWNERSHIP_CHANGED;
 					writebackClient(owner);
-				}
-				break;
-			case OWNERSHIP_CHANGED:
-				if (mode.equals("r")) {
-					readers.add(client);
-				} else {
-					// TODO
 				}
 				break;
 
@@ -166,6 +177,9 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 			break;
 		case OWNERSHIP_CHANGED:
 			state = CacheState.WRITE_SHARED;
+			synchronized (this) {
+				notifyAll();
+			}
 			break;
 		default:
 			break;
