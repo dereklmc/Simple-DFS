@@ -12,8 +12,11 @@ import lib.ServerInterface;
 
 public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 
-	public ClientTest() throws RemoteException {
+	private Prompter input;
+
+	public ClientTest(Prompter input) throws RemoteException {
 		super();
+		this.input = input;
 	}
 
 	@Override
@@ -24,12 +27,21 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 
 	@Override
 	public boolean writeback() throws RemoteException {
+		while (input.isWaitingForInput()) {
+			try {
+				input.wait();
+			} catch (InterruptedException e) {
+				break;
+			}
+		}
 		System.out.println("Recieved Writeback request!");
 		return false;
 	}
 
 	public static void main(String[] args) throws IOException, NotBoundException {
-		ClientTest test = new ClientTest();
+		Prompter input = new Prompter();
+		
+		ClientTest test = new ClientTest(input);
 		Naming.rebind("rmi://localhost:" + args[1] + "/fileclient", test);
 		
 		InetAddress addr = InetAddress.getLocalHost();
@@ -38,7 +50,6 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 		String address = String.format("rmi://%s:%s/%s", args[0], args[1], "dfsserver");
 		ServerInterface server = (ServerInterface) Naming.lookup(address);
 		
-		Prompter input = new Prompter();
 		String[] serverMethods = new String[] { "download", "upload" };
 		
 		while (true) {

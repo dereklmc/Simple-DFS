@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class Prompter {
 	Scanner console;
+	private boolean waitingForInput = false;
 	
 	public Prompter() {
 		console = new Scanner(System.in);
@@ -12,7 +13,7 @@ public class Prompter {
 	
 	public boolean ask(String question) throws IOException {
 		System.out.print(question + "(y/n): ");
-		String in = console.nextLine();
+		String in = getInput();
 		if (in.equals("y"))
 			return true;
 		else if (in.equals("n"))
@@ -21,10 +22,18 @@ public class Prompter {
 			throw new IOException("Invalid response received: " + in);
 		
 	}
+
+	private String getInput() {
+		waitingForInput = true;
+		String in = console.nextLine();
+		waitingForInput = false;
+		notifyAll();
+		return in;
+	}
 	
 	public String prompt(String prompt) {
 		System.out.print(prompt);
-		return console.nextLine();
+		return getInput();
 	}
 
 	public int promptChoice(String desc, String[] serverMethods) {
@@ -35,5 +44,9 @@ public class Prompter {
 		}
 		String choice = prompt("Choice? (select number) : ");
 		return Integer.parseInt(choice);
+	}
+
+	public boolean isWaitingForInput() {
+		return waitingForInput ;
 	}
 }
