@@ -31,16 +31,7 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 
 	@Override
 	public boolean writeback() throws RemoteException {
-		synchronized (input) {
-		while (input.isWaitingForInput()) {
-			try {
-				input.wait();
-			} catch (InterruptedException e) {
-				break;
-			}
-		}
-		}
-		System.out.println("Recieved Writeback request!");
+		System.out.println("\nRecieved Writeback request!");
 		return false;
 	}
 

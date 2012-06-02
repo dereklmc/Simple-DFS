@@ -5,7 +5,6 @@ import java.util.Scanner;
 
 public class Prompter {
 	Scanner console;
-	private boolean waitingForInput = false;
 	
 	public Prompter() {
 		console = new Scanner(System.in);
@@ -24,13 +23,7 @@ public class Prompter {
 	}
 
 	private String getInput() {
-		waitingForInput = true;
-		String in = console.nextLine();
-		waitingForInput = false;
-		synchronized (this) {			
-			notifyAll();
-		}
-		return in;
+		return console.nextLine();
 	}
 	
 	public String prompt(String prompt) {
@@ -46,9 +39,5 @@ public class Prompter {
 		}
 		String choice = prompt("Choice? (select number) : ");
 		return Integer.parseInt(choice);
-	}
-
-	public boolean isWaitingForInput() {
-		return waitingForInput ;
 	}
 }
