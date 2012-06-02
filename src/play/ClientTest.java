@@ -11,18 +11,18 @@ import lib.Prompter;
 import lib.ServerInterface;
 
 public class ClientTest extends UnicastRemoteObject implements ClientInterface {
-
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
-	private Prompter input;
+	private ServerInterface server;
+	private boolean recievedWriteback = false;
+	private String localAddress;
 
-	public ClientTest(Prompter input) throws RemoteException {
+	public ClientTest(ServerInterface server, String localAddress) throws RemoteException {
 		super();
-		this.input = input;
+		this.server = server;
+		this.localAddress = localAddress;
 	}
-
+	
 	@Override
 	public boolean invalidate() throws RemoteException {
 		// TODO Auto-generated method stub
@@ -32,14 +32,22 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 	@Override
 	public boolean writeback() throws RemoteException {
 		System.out.println("\nRecieved Writeback request!");
+		recievedWriteback = true;
+		return false;
+	}
+	
+	public boolean uploadChanges() throws RemoteException {
+		if (recievedWriteback) {
+			System.out.println("Attempting to upload file...");
+			boolean result = server.upload(localAddress, "testfile.txt", null);
+			recievedWriteback = false;
+			return result;
+		}
 		return false;
 	}
 
 	public static void main(String[] args) throws IOException, NotBoundException {
 		Prompter input = new Prompter();
-		
-		ClientTest test = new ClientTest(input);
-		Naming.rebind("rmi://localhost:" + args[1] + "/fileclient", test);
 		
 		InetAddress addr = InetAddress.getLocalHost();
 		String localAddress = addr.getHostName();
@@ -47,26 +55,17 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 		String address = String.format("rmi://%s:%s/%s", args[0], args[1], "dfsserver");
 		ServerInterface server = (ServerInterface) Naming.lookup(address);
 		
-		String[] serverMethods = new String[] { "download", "upload" };
+		ClientTest test = new ClientTest(server, localAddress);
+		Naming.rebind("rmi://localhost:" + args[1] + "/fileclient", test);
 		
 		while (true) {
+			test.uploadChanges();
 			if (input.ask("Do you want to exit?"))
 				System.exit(0);
-			int methodChoice = input.promptChoice("Choose server method to execute",
-					serverMethods);
-			switch (methodChoice) {
-			case 1:
-				int accessChoice = input.promptChoice("Open file in mode", new String[] {"read", "write"});
-				server.download(localAddress, "testfile.txt", accessChoice == 1 ? "r" : "w");
-				break;
-			case 2:
-				server.upload(localAddress, "testfile.txt", null);
-				break;
-			default:
-				System.err.println("Not a valid  choice! Exiting");
-				System.exit(1);
-				break;
-			}
+			test.uploadChanges();
+			int accessChoice = input.promptChoice("Open file in mode", new String[] {"read", "write"});
+			server.download(localAddress, "testfile.txt", accessChoice == 1 ? "r" : "w");
+			test.uploadChanges();
 		}
 	}
 
