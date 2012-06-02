@@ -1,11 +1,14 @@
 package play;
 
+import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashSet;
 import java.util.Set;
 
+import lib.ClientInterface;
 import lib.FileContents;
 import lib.ServerInterface;
 
@@ -22,12 +25,16 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 	
 	private CacheState state;
 	private Set<String> readers;
+	private String owner = "";
+	private String port;
 	
-	public ServerTest() throws RemoteException {
+	public ServerTest(String port) throws RemoteException, MalformedURLException {
 		super();
 		readers = new HashSet<String>();
 		state = CacheState.NOT_SHARED;
 		printState();
+		this.port = port;
+		Naming.rebind("rmi://localhost:" + port + "/dfsserver", this);
 	}
 
 	private void printState() {
@@ -48,6 +55,7 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 				readers.add(client);
 				state = CacheState.READ_SHARED;
 			} else {
+				owner = client;
 				state = CacheState.WRITE_SHARED;
 			}
 			break;
@@ -55,6 +63,7 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 			if (mode.equals("r")) {
 				readers.add(client);
 			} else {
+				owner = client;
 				state = CacheState.WRITE_SHARED;
 			}
 			break;
@@ -62,6 +71,7 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 			if (mode.equals("r")) {
 				readers.add(client);
 			} else {
+				writebackClient(owner);
 				state = CacheState.OWNERSHIP_CHANGED;
 			}
 			break;
@@ -83,6 +93,23 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 		printState();
 		return null;
 	}
+	
+	private void writebackClient(String clientAddress) {
+		String rmiClientAddress = String.format("rmi://%s:%s/fileclient", clientAddress, port);
+		try {
+			ClientInterface client = (ClientInterface) Naming.lookup(rmiClientAddress);
+			client.writeback();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public boolean upload(String client, String filename, FileContents contents)
@@ -99,8 +126,7 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 			System.exit(-1);
 		}
 		try {
-			ServerTest dfs = new ServerTest();
-			Naming.rebind("rmi://localhost:" + args[0] + "/dfsserver", dfs);
+			ServerTest dfs = new ServerTest(args[0]);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);

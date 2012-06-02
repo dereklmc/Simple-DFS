@@ -24,13 +24,13 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 
 	@Override
 	public boolean writeback() throws RemoteException {
-		// TODO Auto-generated method stub
+		System.out.println("Recieved Writeback request!");
 		return false;
 	}
 
 	public static void main(String[] args) throws IOException, NotBoundException {
 		ClientTest test = new ClientTest();
-		Naming.rebind("rmi://localhost:" + args[1] + "/flieclient", test);
+		Naming.rebind("rmi://localhost:" + args[1] + "/fileclient", test);
 		
 		InetAddress addr = InetAddress.getLocalHost();
 		String localAddress = addr.getHostName();
