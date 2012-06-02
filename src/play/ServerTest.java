@@ -96,9 +96,8 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 	}
 	
 	private void writebackClient(String clientAddress) {
-		String rmiClientAddress = String.format("rmi://%s:%s/fileclient", clientAddress, port);
 		try {
-			ClientInterface client = (ClientInterface) Naming.lookup(rmiClientAddress);
+			ClientInterface client = getRemoteClient(clientAddress);
 			client.writeback();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -111,6 +110,29 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 			e.printStackTrace();
 		}
 	}
+	
+	private void invalidateClient(String clientAddress) {
+		try {
+			ClientInterface client = getRemoteClient(clientAddress);
+			client.invalidate();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public ClientInterface getRemoteClient(String clientAddress)
+			throws NotBoundException, MalformedURLException, RemoteException {
+		String rmiClientAddress = String.format("rmi://%s:%s/fileclient", clientAddress, port);
+		ClientInterface client = (ClientInterface) Naming.lookup(rmiClientAddress);
+		return client;
+	}
 
 	@Override
 	public boolean upload(String client, String filename, FileContents contents)
@@ -122,6 +144,7 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 		for (Iterator<String> iterator = readers.iterator(); iterator.hasNext();) {
 			String reader = iterator.next();
 			System.out.println("Invalidating reader <" + reader + ">");
+			invalidateClient(reader);
 			iterator.remove();
 		}
 		switch (state) {

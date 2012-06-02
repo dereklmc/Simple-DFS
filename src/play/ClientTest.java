@@ -25,7 +25,7 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 	
 	@Override
 	public boolean invalidate() throws RemoteException {
-		// TODO Auto-generated method stub
+		System.out.println("\nRecieved Invalidate request!");
 		return false;
 	}
 
