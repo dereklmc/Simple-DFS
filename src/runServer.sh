@@ -1,3 +1,4 @@
+clear
 rmiregistry $DLMPORT &
 RMIREG_PID=$!
 java play.ServerTest $DLMPORT
