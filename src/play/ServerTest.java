@@ -3,22 +3,29 @@ package play;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-
-import server.CachedFile.CacheState;
+import java.util.HashSet;
+import java.util.Set;
 
 import lib.FileContents;
 import lib.ServerInterface;
 
 public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public enum CacheState {
 		READ_SHARED, WRITE_SHARED, OWNERSHIP_CHANGED, NOT_SHARED;
 	}
 	
 	private CacheState state;
+	private Set<String> readers;
 	
 	public ServerTest() throws RemoteException {
 		super();
+		readers = new HashSet<String>();
 		state = CacheState.NOT_SHARED;
 		printState();
 	}
@@ -38,6 +45,7 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 		switch (state) {
 		case NOT_SHARED:
 			if (mode.equals("r")) {
+				readers.add(client);
 				state = CacheState.READ_SHARED;
 			} else {
 				state = CacheState.WRITE_SHARED;
@@ -45,18 +53,21 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 			break;
 		case READ_SHARED:
 			if (mode.equals("r")) {
+				readers.add(client);
 			} else {
 				state = CacheState.WRITE_SHARED;
 			}
 			break;
 		case WRITE_SHARED:
 			if (mode.equals("r")) {
+				readers.add(client);
 			} else {
 				state = CacheState.OWNERSHIP_CHANGED;
 			}
 			break;
 		case OWNERSHIP_CHANGED:
 			if (mode.equals("r")) {
+				readers.add(client);
 			} else {
 				// TODO
 			}
@@ -64,6 +75,10 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 
 		default:
 			break;
+		}
+		System.out.println("Current Readers:");
+		for (String reader : readers) {
+			System.out.println("\t" + reader);
 		}
 		printState();
 		return null;
