@@ -5,12 +5,16 @@ import java.net.InetAddress;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-
+import java.rmi.server.UnicastRemoteObject;
 import lib.ClientInterface;
 import lib.Prompter;
 import lib.ServerInterface;
 
-public class ClientTest implements ClientInterface {
+public class ClientTest extends UnicastRemoteObject implements ClientInterface {
+
+	public ClientTest() throws RemoteException {
+		super();
+	}
 
 	@Override
 	public boolean invalidate() throws RemoteException {

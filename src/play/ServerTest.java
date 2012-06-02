@@ -2,13 +2,18 @@ package play;
 
 import java.rmi.Naming;
 import java.rmi.RemoteException;
-
+import java.rmi.server.UnicastRemoteObject;
 import server.DFSServer;
 
 import lib.FileContents;
 import lib.ServerInterface;
 
-public class ServerTest implements ServerInterface {
+public class ServerTest extends UnicastRemoteObject implements ServerInterface {
+
+	public ServerTest() throws RemoteException {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public FileContents download(String client, String filename, String mode)
