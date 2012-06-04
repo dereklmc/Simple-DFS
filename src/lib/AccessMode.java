@@ -14,11 +14,12 @@ public enum AccessMode {
 		return value;
 	}
 
-	public static AccessMode getMode(String mode) {
+	public static AccessMode getMode(String mode) throws IllegalArgumentException {
 		for (AccessMode availableMode : AccessMode.values()) {
 			if (availableMode.toString().equals(mode))
 				return availableMode;
 		}
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException(
+				"Requested an unsupported access mode for a file. Only supported modes are READ (\"r\") and WRITE (\"w\")");
 	}
 }
