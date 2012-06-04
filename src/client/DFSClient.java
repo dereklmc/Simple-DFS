@@ -2,7 +2,6 @@ package client;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -20,19 +19,17 @@ public class DFSClient implements ClientInterface {
 	}
 
 	public boolean invalidate() throws RemoteException {
-		// TODO Auto-generated method stub
-		return false;
+		return cache.invalidateFile();
 	}
 
 	public boolean writeback() throws RemoteException {
-		// TODO Auto-generated method stub
-		return false;
+		return cache.writeBack();
 	}
 
 	public void open(String fileName, AccessMode mode) throws RemoteException {
 		cache.openFile(fileName, mode);
 	}
-	
+
 	/**
 	 * @param fileName
 	 * @throws IOException
@@ -64,10 +61,7 @@ public class DFSClient implements ClientInterface {
 				String fileName = input.prompt("Filename:");
 				String modeInput = input.prompt("How(r/w):");
 				AccessMode mode = AccessMode.getMode(modeInput);
-				client.open(fileName, mode);
-
-				System.out.println("Chosen filename: " + "[" + mode + "] "
-						+ fileName);
+				System.out.println("Chosen filename: " + "[" + mode + "] " + fileName);
 				client.open(fileName, mode);
 				client.editCurrentFile();
 			}

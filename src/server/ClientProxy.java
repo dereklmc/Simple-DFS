@@ -42,5 +42,16 @@ public class ClientProxy implements ClientInterface {
 	public String getClientName() {
 		return name;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		ClientProxy otherClient;
+		try {
+			otherClient = (ClientProxy) obj;
+		} catch (ClassCastException e) {
+			return false;
+		}
+		return otherClient.getClientName().equals(name);
+	}
 
 }

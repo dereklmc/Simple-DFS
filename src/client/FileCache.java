@@ -12,14 +12,12 @@ import lib.ServerInterface;
 
 public class FileCache {
 
-	private enum FileCacheState {
+	private enum CacheState {
 		INVALID, READ_SHARED, WRITE_OWNED, MODIFIED_OWNED, RELEASE_OWNERSHIP
 	}
 	
 	private String name;
-	private String accessMode;
-	private boolean ownership;
-	private FileCacheState state = FileCacheState.INVALID;
+	private CacheState state = CacheState.INVALID;
 
 	private ServerInterface fileServer;
 	private File tempFile;
@@ -44,27 +42,27 @@ public class FileCache {
 	public synchronized void openFile(String fileName, AccessMode mode)
 			throws RemoteException {
 		if (!fileName.equals(name)) {
-			state = FileCacheState.INVALID;
+			state = CacheState.INVALID;
 		}
 		switch (state) {
 		case INVALID:
 			downloadFile(fileName, mode);
 			if (mode == AccessMode.READ)
-				state = FileCacheState.READ_SHARED;
+				state = CacheState.READ_SHARED;
 			else
-				state = FileCacheState.WRITE_OWNED;
+				state = CacheState.WRITE_OWNED;
 			break;
 		case READ_SHARED:
 			if (mode == AccessMode.WRITE) {
 				downloadFile(fileName, mode);
-				state = FileCacheState.WRITE_OWNED;
+				state = CacheState.WRITE_OWNED;
 			}
 			break;
 		case WRITE_OWNED:
-			state = FileCacheState.WRITE_OWNED;
+			state = CacheState.WRITE_OWNED;
 			break;
 		case MODIFIED_OWNED:
-			state = FileCacheState.WRITE_OWNED;
+			state = CacheState.WRITE_OWNED;
 			break;
 		default:
 			throw new IllegalStateException();
@@ -87,45 +85,47 @@ public class FileCache {
 		}
 	}
 
-	public synchronized void invalidateFile() throws RemoteException {
+	public synchronized boolean invalidateFile() throws RemoteException {
 		switch (state) {
 		case INVALID:
-			state = FileCacheState.INVALID;
+			state = CacheState.INVALID;
 			break;
 		case READ_SHARED:
-			state = FileCacheState.INVALID;
+			state = CacheState.INVALID;
 			break;
 		case WRITE_OWNED:
 			fileServer.upload("", name, getContents());
-			state = FileCacheState.INVALID;
+			state = CacheState.INVALID;
 			break;
 		case MODIFIED_OWNED:
 			fileServer.upload("", name, getContents());
-			state = FileCacheState.INVALID;
+			state = CacheState.INVALID;
 			break;
 		default:
-			throw new IllegalStateException();
+			return false;
 		}
+		return true;
 	}
 
-	public synchronized void writeBack() throws RemoteException {
+	public synchronized boolean writeBack() throws RemoteException {
 		switch (state) {
 		case WRITE_OWNED:
-			state = FileCacheState.RELEASE_OWNERSHIP;
+			state = CacheState.RELEASE_OWNERSHIP;
 			break;
 		case MODIFIED_OWNED:
 			fileServer.upload("", name, getContents());
-			state = FileCacheState.READ_SHARED;
+			state = CacheState.READ_SHARED;
 			break;
 		default:
-			throw new IllegalStateException();
+			return false;
 		}
+		return true;
 	}
 
 	public synchronized void completeSession() throws RemoteException {
-		if (state == FileCacheState.RELEASE_OWNERSHIP) {
+		if (state == CacheState.RELEASE_OWNERSHIP) {
 			fileServer.upload("", name, getContents());
-			state = FileCacheState.READ_SHARED;
+			state = CacheState.READ_SHARED;
 		}
 	}
 
