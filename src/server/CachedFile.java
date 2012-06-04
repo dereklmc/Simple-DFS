@@ -13,6 +13,8 @@ import lib.FileContents;
 
 public class CachedFile {
 
+	private static final String ROOT_DIR = "fs/";
+
 	public enum CacheState {
 		READ_SHARED, WRITE_SHARED, OWNERSHIP_CHANGED, NOT_SHARED;
 	}
@@ -30,7 +32,7 @@ public class CachedFile {
 		readers = new ArrayList<ClientProxy>();
 		owner = null;
 
-		storedFile = new File(fileName);
+		storedFile = new File(ROOT_DIR + fileName);
 		data = new byte[(int) storedFile.length()];
 		FileInputStream fileReader = new FileInputStream(storedFile);
 		fileReader.read(data);
