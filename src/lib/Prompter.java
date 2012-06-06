@@ -31,10 +31,10 @@ public class Prompter {
 		return getInput();
 	}
 
-	public int promptChoice(String desc, String[] serverMethods) {
+	public int promptChoice(String desc, String[] options) {
 		System.out.println(desc);
-		for (int i = 0; i < serverMethods.length; i++) {
-			String choiceDisplay = String.format(" [%s] %s", i+1, serverMethods[i]);
+		for (int i = 0; i < options.length; i++) {
+			String choiceDisplay = String.format(" [%s] %s", i+1, options[i]);
 			System.out.println(choiceDisplay);
 		}
 		String choice = prompt("Choice? (select number) : ");
