@@ -1,13 +1,10 @@
-#!/bin/sh
+rm *.class
 
-rm -f *~
-rm -f *.class
-echo "client compilation"
-javac FileClient.java
-rmic FileClient
-echo "done"
+echo "Compiling java..."
+javac *.java
 
-echo "server compilation"
-javac FileServer.java
-rmic FileServer
-echo "done"
+echo "running rmi compiler..."
+rmic DFSServer
+rmic DFSClient
+
+echo "DONE"

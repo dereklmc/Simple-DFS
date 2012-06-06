@@ -1,5 +1,5 @@
 clear
 rmiregistry $DLMPORT &
 RMIREG_PID=$!
-java play.ServerTest $DLMPORT
+java DFSServer $DLMPORT
 kill -9 $RMIREG_PID

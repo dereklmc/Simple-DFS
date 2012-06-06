@@ -1,5 +1,9 @@
 package play;
 
+import ClientInterface;
+import FileContents;
+import ServerInterface;
+
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -9,9 +13,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import lib.ClientInterface;
-import lib.FileContents;
-import lib.ServerInterface;
 
 public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 

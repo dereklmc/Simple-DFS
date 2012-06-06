@@ -1,14 +1,15 @@
 package play;
 
+import ClientInterface;
+import Prompter;
+import ServerInterface;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import lib.ClientInterface;
-import lib.Prompter;
-import lib.ServerInterface;
 
 public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 	

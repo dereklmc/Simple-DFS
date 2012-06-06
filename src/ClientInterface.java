@@ -1,4 +1,4 @@
-package lib;
+
 import java.rmi.*;
 
 public interface ClientInterface extends Remote {
