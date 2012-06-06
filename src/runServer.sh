@@ -1,4 +1,4 @@
-clear &&
+clear
 rmiregistry $DLMPORT &
 RMIREG_PID=$!
 java server.DFSServer $DLMPORT

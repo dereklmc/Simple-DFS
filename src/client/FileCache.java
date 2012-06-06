@@ -65,9 +65,25 @@ public class FileCache {
 			}
 			break;
 		case WRITE_OWNED:
+			if (!fileName.equals(name)) {
+				try {
+                         	       fileServer.upload(clientName, name, getContents());
+                        	} catch (IOException e) {
+                        	        throw new RemoteException("Could not read contents of local file cache.", e);
+                        	}
+				downloadFile(fileName, mode);
+			}
 			state = CacheState.WRITE_OWNED;
 			break;
 		case MODIFIED_OWNED:
+			if (!fileName.equals(name)) {
+				try {
+                         	       fileServer.upload(clientName, name, getContents());
+                        	} catch (IOException e) {
+                        	        throw new RemoteException("Could not read contents of local file cache.", e);
+                        	}
+				downloadFile(fileName, mode);
+			}
 			state = CacheState.WRITE_OWNED;
 			break;
 		default:
