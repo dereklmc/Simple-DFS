@@ -69,8 +69,10 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 			Naming.rebind("rmi://localhost:" + args[1] + "/fileclient", client);
 			Prompter input = new Prompter();
 			while (true) {
-				if (input.ask("Do you want to exit?"))
+				if (input.ask("Do you want to exit?")) {
+					client.writeback();
 					System.exit(0);
+				}
 				System.out.println("FileClient: Next file to open");
 				String fileName = input.prompt("Filename:");
 				String modeInput = input.prompt("How(r/w):");
