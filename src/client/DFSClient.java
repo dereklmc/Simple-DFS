@@ -85,6 +85,7 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 				String editor = input.promptChoices("Editor", new String[] {"vim", "gvim", "emacs" });
 				client.open(fileName, mode);
 				client.launchEditor(editor);
+				client.completeSession();
 			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
