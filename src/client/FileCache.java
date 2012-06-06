@@ -1,6 +1,7 @@
 package client;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,9 +38,11 @@ public class FileCache {
 		clientName = addr.getHostName();
 	}
 
-	public FileContents getContents() {
-		// TODO Auto-generated method stub
-		return null;
+	public FileContents getContents() throws IOException {
+		byte[] data = new byte[(int) tempFile.length()];
+		FileInputStream fileReader = new FileInputStream(tempFile);
+		fileReader.read(data);
+		return new FileContents(data);
 	}
 
 	public synchronized void openFile(String fileName, AccessMode mode)
@@ -87,7 +90,11 @@ public class FileCache {
 			state = CacheState.RELEASE_OWNERSHIP;
 			break;
 		case MODIFIED_OWNED:
-			result = fileServer.upload(clientName, name, getContents());
+			try {
+				fileServer.upload(clientName, name, getContents());
+			} catch (IOException e) {
+				throw new RemoteException("Could not read contents of local file cache.", e);
+			}
 			if (result)
 				state = CacheState.READ_SHARED;
 			break;
@@ -99,7 +106,11 @@ public class FileCache {
 
 	public synchronized void completeSession() throws RemoteException {
 		if (state == CacheState.RELEASE_OWNERSHIP) {
-			fileServer.upload(clientName, name, getContents());
+			try {
+				fileServer.upload(clientName, name, getContents());
+			} catch (IOException e) {
+				throw new RemoteException("Could not read contents of local file cache.", e);
+			}
 			state = CacheState.READ_SHARED;
 		}
 	}
