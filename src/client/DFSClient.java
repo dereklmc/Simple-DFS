@@ -5,13 +5,19 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.Naming;
+import java.rmi.server.UnicastRemoteObject;
+
 import lib.AccessMode;
 import lib.ClientInterface;
 import lib.Prompter;
 import lib.ServerInterface;
 
-public class DFSClient implements ClientInterface {
+public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3680069569724752340L;
 	private FileCache cache;
 
 	public DFSClient(ServerInterface fileServer) throws IOException {
