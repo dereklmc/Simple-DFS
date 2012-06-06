@@ -21,9 +21,10 @@ public class FileCache {
 
 	private ServerInterface fileServer;
 	private File tempFile;
-
-	public FileCache(ServerInterface fileServer, String cacheLocation)
-			throws IOException {
+	
+	private String clientName = null; // TODO
+	
+	public FileCache(ServerInterface fileServer) throws IOException {
 		this.fileServer = fileServer;
 		tempFile = new File("/tmp/dlm18.txt");
 		if (!tempFile.exists())
@@ -33,10 +34,6 @@ public class FileCache {
 	public FileContents getContents() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public void setMode(String mode) {
-		
 	}
 
 	public synchronized void openFile(String fileName, AccessMode mode)
@@ -107,30 +104,32 @@ public class FileCache {
 	}
 
 	public synchronized boolean writeBack() throws RemoteException {
+		boolean result = true;
 		switch (state) {
 		case WRITE_OWNED:
 			state = CacheState.RELEASE_OWNERSHIP;
 			break;
 		case MODIFIED_OWNED:
-			fileServer.upload("", name, getContents());
-			state = CacheState.READ_SHARED;
+			result = fileServer.upload("", name, getContents());
+			if (result)
+				state = CacheState.READ_SHARED;
 			break;
 		default:
-			return false;
+			result = false;
 		}
-		return true;
+		return result;
 	}
 
 	public synchronized void completeSession() throws RemoteException {
 		if (state == CacheState.RELEASE_OWNERSHIP) {
-			fileServer.upload("", name, getContents());
+			fileServer.upload(clientName, name, getContents());
 			state = CacheState.READ_SHARED;
 		}
 	}
 
 	private void downloadFile(String fileName, AccessMode mode)
 			throws RemoteException {
-		FileContents contents = fileServer.download("", fileName, mode.toString());
+		FileContents contents = fileServer.download(clientName, fileName, mode.toString());
 		putFile(fileName, contents);
 		tempFile.setWritable(mode == AccessMode.WRITE);
 	}
