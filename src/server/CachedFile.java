@@ -2,6 +2,7 @@ package server;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -88,6 +89,19 @@ public class CachedFile {
 		}
 		data = contents.get();
 		state = CacheState.NOT_SHARED;
+		(new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					FileOutputStream writer = new FileOutputStream(storedFile);
+					writer.write(data);
+				} catch (IOException e) {
+					System.err.println("Could not cached write file to persistant storage!");
+					e.printStackTrace();
+				}
+			}
+		})).start();
 		notifyAll();
 		return true;
 	}
