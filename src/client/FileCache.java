@@ -25,7 +25,7 @@ public class FileCache {
 	public FileCache(ServerInterface fileServer, String cacheLocation)
 			throws IOException {
 		this.fileServer = fileServer;
-		tempFile = new File("useraccount.txt");
+		tempFile = new File("/tmp/dlm18.txt");
 		if (!tempFile.exists())
 			tempFile.createNewFile();
 	}
@@ -70,9 +70,8 @@ public class FileCache {
 	}
 	
 	public void launchEditor() {
-//		String[] command = { "sh", "-c",
-//		"vim useraccount.txt </dev/tty >/dev/tty" };
-		String[] command = { "gvim", "-f", tempFile.getAbsolutePath() };
+		String[] command = { "sh", "-c", "vim " + tempFile.getAbsolutePath() + " </dev/tty >/dev/tty" };
+//		String[] command = { "gvim", "-f", tempFile.getAbsolutePath() };
 		try {
 			Process p = Runtime.getRuntime().exec(command);
 			p.waitFor();

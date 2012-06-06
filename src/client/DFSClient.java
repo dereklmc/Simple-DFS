@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-
+import java.rmi.Naming;
 import lib.AccessMode;
 import lib.ClientInterface;
 import lib.Prompter;
@@ -15,7 +15,7 @@ public class DFSClient implements ClientInterface {
 	private FileCache cache;
 
 	public DFSClient(ServerInterface fileServer) throws IOException {
-		cache = new FileCache(fileServer, "/temp/useraccount.txt");
+		cache = new FileCache(fileServer, "/temp/dlm8.txt");
 	}
 
 	public boolean invalidate() throws RemoteException {
@@ -45,13 +45,12 @@ public class DFSClient implements ClientInterface {
 	}
 
 	public static void main(String[] args) {
-		int port = Integer.parseInt(args[0]);
-		System.out.println("Port: " + port);
-
 		ServerInterface fileServer;
 		try {
-			fileServer = new MockServer(); // (ServerInterface)
+			//fileServer = new MockServer(); // (ServerInterface)
 											// Naming.lookup("");
+			String dfsAddress = String.format("rmi://%s:%s/dfsserver", args[0], args[1]);
+			fileServer = (ServerInterface) Naming.lookup(dfsAddress);
 			DFSClient client = new DFSClient(fileServer);
 			Prompter input = new Prompter();
 			while (true) {
