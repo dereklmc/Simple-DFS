@@ -19,21 +19,21 @@ public class FileCache {
 	private enum CacheState {
 		INVALID, READ_SHARED, WRITE_OWNED, MODIFIED_OWNED, RELEASE_OWNERSHIP
 	}
-	
+
 	private String name;
 	private CacheState state = CacheState.INVALID;
 
 	private ServerInterface fileServer;
 	private File tempFile;
-	
+
 	private String clientName;
-	
+
 	public FileCache(ServerInterface fileServer) throws IOException {
 		this.fileServer = fileServer;
 		tempFile = new File(LOCAL_CACHE_PATH);
 		if (!tempFile.exists())
 			tempFile.createNewFile();
-		
+
 		InetAddress addr = InetAddress.getLocalHost();
 		clientName = addr.getHostName();
 	}
@@ -45,11 +45,13 @@ public class FileCache {
 		return new FileContents(data);
 	}
 
-	public synchronized void openFile(String fileName, AccessMode mode)
-			throws RemoteException {
+	public synchronized void openFile(String fileName, AccessMode mode) throws RemoteException {
 		if (!fileName.equals(name)) {
 			state = CacheState.INVALID;
 		}
+		System.out.println("Opening File");
+		System.out.println("\tCurrent State: " + state);
+		System.out.println("\tMode: " + state);
 		switch (state) {
 		case INVALID:
 			downloadFile(fileName, mode);
@@ -67,10 +69,10 @@ public class FileCache {
 		case WRITE_OWNED:
 			if (!fileName.equals(name)) {
 				try {
-                         	       fileServer.upload(clientName, name, getContents());
-                        	} catch (IOException e) {
-                        	        throw new RemoteException("Could not read contents of local file cache.", e);
-                        	}
+					fileServer.upload(clientName, name, getContents());
+				} catch (IOException e) {
+					throw new RemoteException("Could not read contents of local file cache.", e);
+				}
 				downloadFile(fileName, mode);
 			}
 			state = CacheState.WRITE_OWNED;
@@ -78,10 +80,10 @@ public class FileCache {
 		case MODIFIED_OWNED:
 			if (!fileName.equals(name)) {
 				try {
-                         	       fileServer.upload(clientName, name, getContents());
-                        	} catch (IOException e) {
-                        	        throw new RemoteException("Could not read contents of local file cache.", e);
-                        	}
+					fileServer.upload(clientName, name, getContents());
+				} catch (IOException e) {
+					throw new RemoteException("Could not read contents of local file cache.", e);
+				}
 				downloadFile(fileName, mode);
 			}
 			state = CacheState.WRITE_OWNED;
@@ -89,6 +91,7 @@ public class FileCache {
 		default:
 			throw new IllegalStateException();
 		}
+		System.out.println("\tNext State: " + state.name());
 	}
 
 	public synchronized boolean invalidateFile() throws RemoteException {
@@ -131,8 +134,7 @@ public class FileCache {
 		}
 	}
 
-	private void downloadFile(String fileName, AccessMode mode)
-			throws RemoteException {
+	private void downloadFile(String fileName, AccessMode mode) throws RemoteException {
 		FileContents contents = fileServer.download(clientName, fileName, mode.toString());
 		putFile(fileName, contents);
 		tempFile.setWritable(mode == AccessMode.WRITE);
