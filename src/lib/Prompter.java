@@ -40,4 +40,9 @@ public class Prompter {
 		String choice = prompt("Choice? (select number) : ");
 		return Integer.parseInt(choice);
 	}
+	
+	public String promptChoices(String desc, String[] options) {
+		int choice = promptChoice(desc, options);
+		return options[choice];
+	}
 }

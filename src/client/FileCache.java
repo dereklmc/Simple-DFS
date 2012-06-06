@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.rmi.RemoteException;
 
 import lib.AccessMode;
@@ -11,6 +12,8 @@ import lib.FileContents;
 import lib.ServerInterface;
 
 public class FileCache {
+
+	private static final String LOCAL_CACHE_PATH = "/tmp/dlm18.txt";
 
 	private enum CacheState {
 		INVALID, READ_SHARED, WRITE_OWNED, MODIFIED_OWNED, RELEASE_OWNERSHIP
@@ -22,13 +25,16 @@ public class FileCache {
 	private ServerInterface fileServer;
 	private File tempFile;
 	
-	private String clientName = null; // TODO
+	private String clientName;
 	
 	public FileCache(ServerInterface fileServer) throws IOException {
 		this.fileServer = fileServer;
-		tempFile = new File("/tmp/dlm18.txt");
+		tempFile = new File(LOCAL_CACHE_PATH);
 		if (!tempFile.exists())
 			tempFile.createNewFile();
+		
+		InetAddress addr = InetAddress.getLocalHost();
+		clientName = addr.getHostName();
 	}
 
 	public FileContents getContents() {
@@ -65,42 +71,13 @@ public class FileCache {
 			throw new IllegalStateException();
 		}
 	}
-	
-	public void launchEditor() {
-		String[] command = { "sh", "-c", "vim " + tempFile.getAbsolutePath() + " </dev/tty >/dev/tty" };
-//		String[] command = { "gvim", "-f", tempFile.getAbsolutePath() };
-		try {
-			Process p = Runtime.getRuntime().exec(command);
-			p.waitFor();
-		} catch (IOException e) {
-			System.err.println("Could not open local cache of file with emacs");
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	public synchronized boolean invalidateFile() throws RemoteException {
-		switch (state) {
-		case INVALID:
+		if (state == CacheState.READ_SHARED) {
 			state = CacheState.INVALID;
-			break;
-		case READ_SHARED:
-			state = CacheState.INVALID;
-			break;
-		case WRITE_OWNED:
-			fileServer.upload("", name, getContents());
-			state = CacheState.INVALID;
-			break;
-		case MODIFIED_OWNED:
-			fileServer.upload("", name, getContents());
-			state = CacheState.INVALID;
-			break;
-		default:
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public synchronized boolean writeBack() throws RemoteException {
@@ -110,7 +87,7 @@ public class FileCache {
 			state = CacheState.RELEASE_OWNERSHIP;
 			break;
 		case MODIFIED_OWNED:
-			result = fileServer.upload("", name, getContents());
+			result = fileServer.upload(clientName, name, getContents());
 			if (result)
 				state = CacheState.READ_SHARED;
 			break;
@@ -146,5 +123,9 @@ public class FileCache {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public String getCachePath() {
+		return LOCAL_CACHE_PATH;
 	}
 }

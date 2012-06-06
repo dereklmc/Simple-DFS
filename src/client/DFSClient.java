@@ -15,7 +15,7 @@ public class DFSClient implements ClientInterface {
 	private FileCache cache;
 
 	public DFSClient(ServerInterface fileServer) throws IOException {
-		cache = new FileCache(fileServer, "/temp/dlm8.txt");
+		cache = new FileCache(fileServer);
 	}
 
 	public boolean invalidate() throws RemoteException {
@@ -29,18 +29,26 @@ public class DFSClient implements ClientInterface {
 	public void open(String fileName, AccessMode mode) throws RemoteException {
 		cache.openFile(fileName, mode);
 	}
-
-	/**
-	 * @param fileName
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	public void editCurrentFile() {
-		cache.launchEditor();
+	
+	public void launchEditor(String desiredEditor) {
+		String cachePath = cache.getCachePath();
+		String[] command = null;
+		if (desiredEditor.equals("vim")) {
+			command = new String[] { "sh", "-c", "vim " + cachePath + " </dev/tty >/dev/tty" };
+		} else if (desiredEditor.equals("gvim")) {
+			command = new String[] { "gvim", "-f", cachePath };
+		} else if (desiredEditor.equals("emacs")) {
+			
+		}
 		try {
-			cache.completeSession();
-		} catch (RemoteException e) {
-			System.err.println("Could not upload saved results to DFS Server");
+			Process p = Runtime.getRuntime().exec(command);
+			p.waitFor();
+		} catch (IOException e) {
+			System.err.println("Could not open local cache of file with emacs");
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -60,9 +68,9 @@ public class DFSClient implements ClientInterface {
 				String fileName = input.prompt("Filename:");
 				String modeInput = input.prompt("How(r/w):");
 				AccessMode mode = AccessMode.getMode(modeInput);
-				System.out.println("Chosen filename: " + "[" + mode + "] " + fileName);
+				String editor = input.promptChoices("Editor", new String[] {"vim", "gvim", "emacs" });
 				client.open(fileName, mode);
-				client.editCurrentFile();
+				client.launchEditor(editor);
 			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
