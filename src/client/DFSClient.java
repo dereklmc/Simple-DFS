@@ -56,10 +56,11 @@ public class DFSClient implements ClientInterface {
 		ServerInterface fileServer;
 		try {
 			//fileServer = new MockServer(); // (ServerInterface)
-											// Naming.lookup("");
+										// Naming.lookup("");
 			String dfsAddress = String.format("rmi://%s:%s/dfsserver", args[0], args[1]);
 			fileServer = (ServerInterface) Naming.lookup(dfsAddress);
 			DFSClient client = new DFSClient(fileServer);
+			Naming.rebind("rmi://localhost:" + args[1] + "/fileclient", client);
 			Prompter input = new Prompter();
 			while (true) {
 				if (input.ask("Do you want to exit?"))

@@ -13,7 +13,7 @@ import lib.FileContents;
 
 public class CachedFile {
 
-	private static final String ROOT_DIR = "~/fs/";
+	private static final String ROOT_DIR = "/tmp/";
 
 	public enum CacheState {
 		READ_SHARED, WRITE_SHARED, OWNERSHIP_CHANGED, NOT_SHARED;
