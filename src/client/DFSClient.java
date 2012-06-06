@@ -36,6 +36,10 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 		cache.openFile(fileName, mode);
 	}
 	
+	public void completeSession() throws RemoteException {
+		cache.completeSession();
+	}
+	
 	public void launchEditor(String desiredEditor) {
 		String cachePath = cache.getCachePath();
 		String[] command = null;
@@ -71,6 +75,7 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 			while (true) {
 				if (input.ask("Do you want to exit?")) {
 					client.writeback();
+					client.completeSession();
 					System.exit(0);
 				}
 				System.out.println("FileClient: Next file to open");
