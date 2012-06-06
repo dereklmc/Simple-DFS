@@ -1,9 +1,5 @@
 package play;
 
-import ClientInterface;
-import FileContents;
-import ServerInterface;
-
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -12,6 +8,9 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import play.ClientTestInterface;
+import play.ServerInterface;
 
 
 public class ServerTest extends UnicastRemoteObject implements ServerInterface {
@@ -155,7 +154,7 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 
 	private void writebackClient(String clientAddress) {
 		try {
-			ClientInterface client = getRemoteClient(clientAddress);
+			ClientTestInterface client = getRemoteClient(clientAddress);
 			client.writeback();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -171,7 +170,7 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 
 	private void invalidateClient(String clientAddress) {
 		try {
-			ClientInterface client = getRemoteClient(clientAddress);
+			ClientTestInterface client = getRemoteClient(clientAddress);
 			client.invalidate();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -185,10 +184,10 @@ public class ServerTest extends UnicastRemoteObject implements ServerInterface {
 		}
 	}
 
-	public ClientInterface getRemoteClient(String clientAddress) throws NotBoundException,
+	public ClientTestInterface getRemoteClient(String clientAddress) throws NotBoundException,
 			MalformedURLException, RemoteException {
 		String rmiClientAddress = String.format("rmi://%s:%s/fileclient", clientAddress, port);
-		ClientInterface client = (ClientInterface) Naming.lookup(rmiClientAddress);
+		ClientTestInterface client = (ClientTestInterface) Naming.lookup(rmiClientAddress);
 		return client;
 	}
 

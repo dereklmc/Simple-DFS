@@ -1,10 +1,8 @@
 
-
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-
 
 /**
  * Establishes a connection to a remote client object.

@@ -1,5 +1,6 @@
 package play;
 
+
 import play.Waite2Test.Foo;
 
 public class Waite2Test {

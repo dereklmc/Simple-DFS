@@ -1,5 +1,6 @@
 package play;
 
+
 public class WaitTest {
 
 	public static class Client extends Thread {

@@ -1,5 +1,4 @@
 
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -8,8 +7,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
-
-
 
 public class DFSServer extends UnicastRemoteObject implements ServerInterface {
 	

@@ -1,9 +1,5 @@
 package play;
 
-import ClientInterface;
-import Prompter;
-import ServerInterface;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.rmi.Naming;
@@ -11,7 +7,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ClientTest extends UnicastRemoteObject implements ClientInterface {
+public class ClientTest extends UnicastRemoteObject implements ClientTestInterface {
 	
 	private static final long serialVersionUID = 1L;
 	private ServerInterface server;
@@ -24,13 +20,11 @@ public class ClientTest extends UnicastRemoteObject implements ClientInterface {
 		this.localAddress = localAddress;
 	}
 	
-	@Override
 	public boolean invalidate() throws RemoteException {
 		System.out.println("\nRecieved Invalidate request!");
 		return false;
 	}
 
-	@Override
 	public boolean writeback() throws RemoteException {
 		System.out.println("\nRecieved Writeback request!");
 		recievedWriteback = true;
