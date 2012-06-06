@@ -48,7 +48,7 @@ public class DFSServer extends UnicastRemoteObject implements ServerInterface {
 		} catch (NotBoundException e) {
 			throw new RemoteException("Error creating connection to client requesting file download.", e);
 		}
-		
+		System.out.println(String.format("Downloading file \"%s\" in mode [%s]. Current file state <%s>", filename, mode, file.getState()));
 		return file.getContents();
 	}
 

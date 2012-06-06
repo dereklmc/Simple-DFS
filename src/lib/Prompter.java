@@ -57,7 +57,7 @@ public class Prompter {
 	 * @return - The input the user entered in response to the prompt.
 	 */
 	public String prompt(String prompt) {
-		System.out.print(prompt);
+		System.out.print(prompt + ": ");
 		return console.nextLine();
 	}
 

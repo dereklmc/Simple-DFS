@@ -65,24 +65,30 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 	public static void main(String[] args) {
 		ServerInterface fileServer;
 		try {
-			//fileServer = new MockServer(); // (ServerInterface)
-										// Naming.lookup("");
+			System.out.println("Connecting to server ...");
+			//fileServer = new MockServer(); // (ServerInterface) Naming.lookup("");
 			String dfsAddress = String.format("rmi://%s:%s/dfsserver", args[0], args[1]);
 			fileServer = (ServerInterface) Naming.lookup(dfsAddress);
+			
+			System.out.println("Starting client ...");
 			DFSClient client = new DFSClient(fileServer);
 			Naming.rebind("rmi://localhost:" + args[1] + "/fileclient", client);
+			
 			Prompter input = new Prompter();
 			while (true) {
 				if (input.ask("Do you want to exit?")) {
+					System.out.println("Writing any changes ...");
 					client.writeback();
 					client.completeSession();
+					System.out.println("DONE");
 					System.exit(0);
 				}
 				System.out.println("FileClient: Next file to open");
-				String fileName = input.prompt("Filename:");
-				String modeInput = input.prompt("How(r/w):");
+				String fileName = input.prompt("Filename");
+				String modeInput = input.prompt("How(r/w)");
 				AccessMode mode = AccessMode.getMode(modeInput);
 				String editor = input.promptChoices("Editor", new String[] {"vim", "gvim", "emacs" });
+				
 				client.open(fileName, mode);
 				client.launchEditor(editor);
 				client.completeSession();

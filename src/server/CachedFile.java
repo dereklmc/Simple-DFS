@@ -116,4 +116,8 @@ public class CachedFile {
 		return owner.getClientName().equals(clientName);
 	}
 
+	public String getState() {
+		return state.name();
+	}
+
 }
