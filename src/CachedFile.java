@@ -193,5 +193,5 @@ public class CachedFile {
      */
     private void addReader(ClientProxy client) {
         if (!readers.contains(client))
-            readers.add(client):
+            readers.add(client);
 }   }
