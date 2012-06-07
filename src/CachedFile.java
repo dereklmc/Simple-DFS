@@ -63,6 +63,8 @@ public class CachedFile {
 					throw new RemoteException("Writeback request to current owner failed!", e);
 				}
 			}
+		} else {
+			System.out.println("Client <" + client.getName() + "> already owns file <" + storedFile.getName() + "> for write.");
 		}
 		owner = client;
 	}
@@ -73,6 +75,7 @@ public class CachedFile {
 
 	public synchronized boolean updateContents(String clientName, FileContents contents)
 			throws RemoteException {
+		System.out.println("Update from <" + clientName + "> for file <" + storedFile.getName() + ">. Current owner is <" + (owner == null ? "-" : owner.getName()) + ">");
 		if (owner == null && owner.getName().equals(clientName)) {
 			return false;
 		}
@@ -86,6 +89,7 @@ public class CachedFile {
 		data = contents.get();
 		(new AsyncFileWriter(storedFile, data)).start();
 		notifyAll();
+		System.out.println("Finished update contents from <" + clientName + ">");
 		return true;
 	}
 
