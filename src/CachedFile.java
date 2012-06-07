@@ -60,7 +60,7 @@ public class CachedFile {
 
 	public synchronized boolean updateContents(String clientName, FileContents contents)
 			throws RemoteException {
-		if (owner == null && owner.getClientName().equals(clientName)) {
+		if (owner == null && owner.getName().equals(clientName)) {
 			return false;
 		}
 		while (!readers.isEmpty()) {

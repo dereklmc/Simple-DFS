@@ -36,19 +36,21 @@ public class ClientProxy implements ClientInterface {
 		return client.writeback();
 	}
 
-	public String getClientName() {
+	public String getName() {
 		return name;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		ClientProxy otherClient;
+		if (obj == null)
+			return false;
+		
 		try {
-			otherClient = (ClientProxy) obj;
+			ClientProxy otherClient = (ClientProxy) obj;
+			return otherClient.getName().equals(name);
 		} catch (ClassCastException e) {
 			return false;
 		}
-		return otherClient.getClientName().equals(name);
 	}
 
 }
