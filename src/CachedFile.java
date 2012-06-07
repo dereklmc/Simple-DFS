@@ -119,6 +119,7 @@ public class CachedFile {
 					+ storedFile.getName() + "> for write.");
 		}
 		owner = client;
+		System.out.println("New owner not null: " + (owner != null ? "true" : "FALSE"));
 	}
     
     /**
@@ -146,7 +147,7 @@ public class CachedFile {
 	public boolean updateContents(String clientName, FileContents contents) throws RemoteException {
 		System.out.println("Update from <" + clientName + "> for file <" + storedFile.getName()
 				+ ">. Current owner is <" + (owner == null ? "-" : owner.getName()) + ">");
-		if (owner == null || owner.getName().equals(clientName)) {
+		if (owner == null) {
 			return false;
 		}
         // Invalidate readers.
