@@ -95,9 +95,11 @@ public class DFSServer extends UnicastRemoteObject implements ServerInterface {
 			System.exit(-1);
 		}
 		try {
+			System.out.println("Starting server...");
 			DFSServer dfs = new DFSServer(args[0]);
 			Naming.rebind("rmi://localhost:" + args[0] + "/dfsserver", dfs);
 			Scanner input = new Scanner(System.in);
+			System.out.println("Server started.");
 			while (true) {
 				String nextAction = input.nextLine();
 				if (nextAction.equals("exit")) {

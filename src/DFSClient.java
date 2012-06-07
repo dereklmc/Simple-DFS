@@ -86,12 +86,15 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 	}
 
 	public synchronized boolean writeback() throws RemoteException {
+		System.out.println("Recieved Writeback! Current state is [" + state.name() + "]");
 		if (state == CacheState.WRITE_OWNED) {
 			state = CacheState.RELEASE_OWNERSHIP;
 			return true;
 		} else if (state == CacheState.MODIFIED_OWNED) {
 			try {
+				System.out.println("Trying to upload current changes.");
 				if (uploadFile()) {
+					System.out.println("Successful upload!");
 					state = CacheState.READ_SHARED;
 					return true;
 				}
