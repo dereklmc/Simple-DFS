@@ -158,7 +158,7 @@ public class CachedFile {
 					+ "> for file previously owned by <" + clientName + ">");
 			reader.invalidate();
 		}
-        reader.add(client);
+        	readers.add(owner);
 		owner = null;
 		data = contents.get();
 		(new AsyncFileWriter(storedFile, data)).start();
