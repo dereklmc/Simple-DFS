@@ -87,6 +87,7 @@ Allowing clients to contact each other directly to transger write-ownership coul
 * old owner uploads contents
 * server acknowledges upload
 * server replies to new owner with contents
+
 If the current owner could be contacted directly, the client requesting ownership just needs to contact the server for the owner and the next owner, resulting in four network events. A similar system is used in xFS and later, resarch distributed file systems, which have a higher performance. This also would simplify the state machine on both client and server and handling deadlock might be simpler.
 
-
+The wait-for-writeback on the server is sort of a spin loop. All threads waiting in this loop wake up each iteration and check if they can proceed. This is inefficient. If the synchronized keyword could be eliminated and a queue of waiting threads could be used with some sort of signaling mechanisim, it might improve performance with the wait.
