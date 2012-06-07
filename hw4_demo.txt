@@ -1,0 +1,44 @@
+CSS434 Final Project Demonstration Procedure
+
+1. Open 4 windows: uw1-320-20, uw1-320-21, uw1-320-22, and uw1-320-23.
+2. Compile with javac and rmic.
+3. Create two empty files: demoA and demoB.
+3. Start a server on uw1-320-20.
+4. Start a client on uw1-320-21, uw1-320-22, and uw1-320-23.
+
+File read test:
+5. Read empty from demoA at uw1-320-21. (A: clt:rs, svr:rs)
+
+File write test:
+6. Write xyz to demoA at uw1-320-21.    (A: clt:wo, svr:ws)
+7. Read xyz from demoA at uw1-320-21.   (A: clt:wo, svr:ws)
+
+File replacement test:
+8. Write 123 to demoB at uw1-320-21.    (A: clt:iv, svr:ns, B: clt:wo, svr:ws)
+9. Read xyz demoA at uw1-320-22.        (A: clt:rs, svr:rs)
+10. Read xyz demoA at uw-320-23.        (A: clt:rs, svr:rs)
+
+File writeback test:
+11. Write xyz?! to demoA at uw1-320-21. (A: clt:wo, svr:ws, B: clt:iv, srv:ns)
+12. Keep emacs open at uw1-320-21.      (A: clt:wo, svr:ws, B: clt:iv, srv:ns)
+13. Write to demoA at uw1-320-22.       (A: clt:suspended, svr:oc)
+14. close emacs at uw1-320-21.          (A: clt:rs, svr:ws)
+15. Write xyz?!abc to demoA at uw1-320-22(A: clt:wo, srv;ws)
+
+Session semantics read test:
+16. Read xyz?! from demoA at uw1-320-21.(A: clt:rs, svr:ws)
+17. Read xyz?! from demoA at uw1-320-23.(A: clt:rs, svr:ws)
+
+Multiple write test:
+18. Write 123pqr to demoB at uw1-320-21.(A: clt:iv, svr:ws, B: clt:wo, svr:ws)
+19. Keep emacs open at uw1-320-21.
+20. Write 123pqr456 to demoB at uw1-320-22.(A: clt:iv, svr:rs, B: clt:suspended, svr:oc)
+21. Write 123pqr456abc to demoB at UW1-320-23. (A: clt:iv, srv:ns, B: clt:suspended, svr:oc)
+22. Close emacs at uw1-320-21.          (A: clt:iv, svr:ws)
+23. Close emacs at uw1-320-22.          (A: clt:iv, svr:ws)
+24. Close emacs at uw1-320-23.          (A: clt:wo, svr:ws)
+
+25. quit uw1-320-20, uw1-320-21, uw1-320-22, and uw1-320-23.
+26. Check demoA and demoB with cat demoA == "xyz?!abc" demoB == "123"
+
+
