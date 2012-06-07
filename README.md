@@ -1,8 +1,20 @@
+<style type="text/css">
+h1,h2,h3 { font-family: 'Ubuntu', Arial, sans-serif; }
+h2 { margin-top: 2em; }
+figure img { margin-top: 5px; margin-bottom: 5px }
+figcaption { padding-top: 5px; }
+.break { page-break-before: always; }
+</style>
+
 # Assignment 4: Simple DFS
 
-UWB CSS 434
-Derek McLean
+***
+
+UWB CSS 434  
+Derek McLean  
 June 7, 2012
+
+***
 
 ### A. Documentation
 
@@ -22,7 +34,18 @@ The cache is maintained by a state machine with __5__ states:
 4. __Modified_Owned__: The current file is owned for writting and changes have recently been written to it.
 5. __Release_Ownership__: The current file is being edited and must be written back as soon as possible.
 
-The state __Modified_Owned__ is an addition to the specification to handle writebacks. A client may recieve a writeback signal from the server at one of two points: when the file is being edited and after the file is edited, but before a new file is opened. In the first case, we only want to write back when the editor closes, so we transition to release ownership. In the second case, we want to write back immediately since the user is not actively using the file. If it were still in Write\_Owned, the file would be uploaded when the user changes files. So, the file is put into modified Write\_Owned (__Modified_Owned__) state that on writeback will upload changes immediately and transistion to Read\_Shared. If the same file is opened again for write, it transitions back to Write\_Owned.
+The state __Modified\_Owned__ is an addition to the specification to handle writebacks. A client may 
+receive a writeback signal from the server at one of two points: when the file is being edited and 
+after the file is edited, but before a new file is opened. In the first case, we only want to write 
+back when the editor closes, so we transition to release ownership. In the second case, we want to 
+write back immediately since the user is not actively using the file. If it were still in Write\_Owned, 
+the file would be uploaded when the user changes files. So, the file is put into modified Write\_Owned 
+(__Modified\_Owned__) state that on writeback will upload changes immediately and transition to Read\_Shared.
+If the same file is opened again for write, it transitions back to Write\_Owned.
+
+<br>
+<br>
+<br>
 
 Client handles two calls from the server:
 
@@ -62,9 +85,17 @@ Each cached file acts as a statemachine with __3__ states:
     * owner is not null
     * readers state is unimportant
 
-One state is missing __Ownership_Changed__. This state is reflected by the interaction between upload and download. When the write owner of a file is changed, the client issues a writeback to the old write owner. It waits until the owner is null. The writeback causes an upload to occur at some point in the future. This upload releases the owner's ownership, causing owner to be set to null. It notifies all download threads waiting for the owner to be null of the change. The first download thread to notice the change is the download that proceeds. This method avoids a deadlock present if the __Ownership_Changed__ state is used.
+<br>
+<br>
+<br>
+
+One state is missing, __Ownership\_Changed__. This state is reflected by the interaction between upload 
+and download. When the write owner of a file is changed, the client issues a writeback to the old write 
+owner. It waits until the owner is null. The writeback causes an upload to occur at some point in the 
+future. This upload releases the owner's ownership, causing owner to be set to null. It notifies all download threads waiting for the owner to be null of the change. The first download thread to notice the change is the download that proceeds. This method avoids a deadlock present if the __Ownership_Changed__ state is used.
 
 The server also responds to two commands:
+
 * __list__ : list all cached files, their current owners and readers
 * __exit__ : stop the server
 
@@ -80,7 +111,7 @@ These are extra classes to support the client and server. Namely, they are:
 
 The first modification that could improve performance is the implementation of a write-on-exit policy for cached files on the server. Currently, the server uses a write-through. So, every upload is written to the file. Only the latest copy on exit needs to be uploaded.
 
-Allowing clients to contact each other directly to transger write-ownership could reduce network traffic. Currently, when ownership is transferred, the following steps have to take place:
+Allowing clients to contact each other directly to transfer write-ownership could reduce network traffic. Currently, when ownership is transferred, the following steps have to take place:
 * new owner contacts server
 * server issues writeback to old owner
 * old owner acknowledges writeback

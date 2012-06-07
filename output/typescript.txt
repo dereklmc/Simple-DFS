@@ -1,14 +1,14 @@
 Script started on Thu 07 Jun 2012 07:02:31 AM PDT
 
-]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ 
-]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ ./compile
+[dlm18@uw1-320-19 Simple-DFS]$ 
+[dlm18@uw1-320-19 Simple-DFS]$ ./compile
 Compiling java...
 running rmi compiler...
 DONE
-]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ ./[K[K>test[K[K[K[K/tmp/t[KdemoA.txt
-]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ >/tmp/t[KdemoB.txt
-]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ ./runServer.[K.sh
-[H[2JStarting server...
+[dlm18@uw1-320-19 Simple-DFS]$ >/tmp/demoA.txt
+[dlm18@uw1-320-19 Simple-DFS]$ >/tmp/demoB.txt
+[dlm18@uw1-320-19 Simple-DFS]$ ./runServer
+Starting server...
 Server started.
 Downloading file "demoA.txt" in mode [r] to client "uw1-320-20"
 	File not cached. Caching file. 
@@ -167,10 +167,10 @@ $ Owned by "uw1-320-21"
 # uw1-320-22
 === *** ===
 
-]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ cat /t[Kdemo[K[K[K[K[Ktm[K[K/tmp/demoA.txt
+[dlm18@uw1-320-19 Simple-DFS]$ cat /tmp/demoA.txt
 xyz?!abc
-]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ cat /tmp/demoB.txt
+[dlm18@uw1-320-19 Simple-DFS]$ cat /tmp/demoB.txt
 123pqr456
-]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ exit
+[dlm18@uw1-320-19 Simple-DFS]$ exit
 
 Script done on Thu 07 Jun 2012 07:14:16 AM PDT
