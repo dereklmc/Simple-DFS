@@ -1,6 +1,6 @@
-
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -11,7 +11,7 @@ import java.rmi.Naming;
 import java.rmi.server.UnicastRemoteObject;
 
 public class DFSClient extends UnicastRemoteObject implements ClientInterface {
-	
+
 	/**
 	 * 
 	 */
@@ -31,7 +31,7 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 	private File tempFile;
 
 	private String clientName;
-	
+
 	public DFSClient(ServerInterface fileServer) throws IOException {
 		this.fileServer = fileServer;
 		tempFile = new File(LOCAL_CACHE_PATH);
@@ -53,7 +53,7 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 		System.out.println("Opening File");
 		System.out.println("\tCurrent State: " + state);
 		System.out.println("\tMode: " + state);
-		
+
 		switch (state) {
 		case INVALID:
 			downloadFile(fileName, mode);
@@ -91,16 +91,29 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 			state = CacheState.RELEASE_OWNERSHIP;
 			return true;
 		} else if (state == CacheState.MODIFIED_OWNED) {
+			final FileContents contents;
 			try {
-				System.out.println("Trying to upload current changes.");
-				if (uploadFile()) {
-					System.out.println("Successful upload!");
-					state = CacheState.READ_SHARED;
-					return true;
-				}
+			contents = getCurrentContents();
 			} catch (IOException e) {
 				throw new RemoteException("Could not read contents of local file cache.", e);
 			}
+			(new Thread() {
+
+				public void run() {
+					try {
+						System.out.println("Trying to upload current changes.");
+						if (fileServer.upload(clientName, name, contents)) {
+							System.out.println("Successful upload!");
+							state = CacheState.READ_SHARED;
+							// return true;
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+//						throw new RemoteException("Could not read contents of local file cache.", e);
+					}
+				}
+			}).start();
+			return true;
 		}
 		return false;
 	}
@@ -113,28 +126,38 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 			state = CacheState.MODIFIED_OWNED;
 		}
 	}
-	
+
 	private void downloadFile(String fileName, char mode) throws IOException {
 		FileContents contents = fileServer.download(clientName, fileName, Character.toString(mode));
 		name = fileName;
 		tempFile.setWritable(true);
-		
+
 		FileOutputStream tempFileWriter = new FileOutputStream(tempFile);
 		tempFileWriter.write(contents.get());
 		tempFileWriter.close();
-		
+
 		tempFile.setWritable(mode == WRITE);
 	}
-	
+
 	private boolean uploadFile() throws IOException {
+		FileContents contents = getCurrentContents();
+		return fileServer.upload(clientName, name, contents);
+
+	}
+
+	/**
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private FileContents getCurrentContents() throws FileNotFoundException, IOException {
 		byte[] data = new byte[(int) tempFile.length()];
 		FileInputStream fileReader = new FileInputStream(tempFile);
 		fileReader.read(data);
 		FileContents contents = new FileContents(data);
-		return fileServer.upload(clientName, name, contents);
-		
+		return contents;
 	}
-	
+
 	public void launchEditor(String desiredEditor) {
 		String[] command = null;
 		if (desiredEditor.equals("vim")) {
@@ -142,7 +165,7 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 		} else if (desiredEditor.equals("gvim")) {
 			command = new String[] { "gvim", "-f", LOCAL_CACHE_PATH };
 		} else if (desiredEditor.equals("emacs")) {
-			
+
 		}
 		try {
 			Process p = Runtime.getRuntime().exec(command);
@@ -160,14 +183,14 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 		ServerInterface fileServer;
 		try {
 			System.out.println("Connecting to server ...");
-			//fileServer = new MockServer();
+			// fileServer = new MockServer();
 			String dfsAddress = String.format("rmi://%s:%s/dfsserver", args[0], args[1]);
 			fileServer = (ServerInterface) Naming.lookup(dfsAddress);
-			
+
 			System.out.println("Starting client ...");
 			DFSClient client = new DFSClient(fileServer);
 			Naming.rebind("rmi://localhost:" + args[1] + "/fileclient", client);
-			
+
 			Prompter input = new Prompter();
 			while (true) {
 				if (input.ask("Do you want to exit?")) {
@@ -180,8 +203,9 @@ public class DFSClient extends UnicastRemoteObject implements ClientInterface {
 				System.out.println("FileClient: Next file to open");
 				String fileName = input.prompt("Filename");
 				char mode = input.prompt("How(r/w)").charAt(0);
-				String editor = input.promptChoices("Editor", new String[] {"vim", "gvim", "emacs" });
-				
+				String editor = input.promptChoices("Editor",
+						new String[] { "vim", "gvim", "emacs" });
+
 				client.openFile(fileName, mode);
 				client.launchEditor(editor);
 				client.completeSession();
