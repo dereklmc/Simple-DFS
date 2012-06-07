@@ -52,11 +52,12 @@ public class CachedFile {
 		if (!client.equals(owner)) {
 			while (owner != null) {
 				try {
-					System.out.println("Waiting for writeback from \"" + owner.getName() + "\"");
+					System.out.println("RegisterWrite for <" + client.getName() + "> Waiting for writeback from \"" + owner.getName() + "\"");
 					owner.writeback();
 					wait();
+					System.out.println("Writeback complete. Continue down for <" + client.getName() + ">");
 				} catch (InterruptedException e) {
-					// TODO log exception
+					System.err.println("Interrupt while waiting for writeback from <" + owner.getName() + ">");
 					continue;
 				} catch (RemoteException e) {
 					throw new RemoteException("Writeback request to current owner failed!", e);
@@ -75,9 +76,10 @@ public class CachedFile {
 		if (owner == null && owner.getName().equals(clientName)) {
 			return false;
 		}
+		System.out.println("Invalidating readers for file previously owned by <" + clientName + ">");
 		while (!readers.isEmpty()) {
 			ClientProxy reader = readers.remove();
-			System.out.println("Invalidating reader <" + reader + ">");
+			System.out.println("Invalidating reader <" + reader + "> for file previously owned by <" + clientName + ">");
 			reader.invalidate();
 		}
 		owner = null;

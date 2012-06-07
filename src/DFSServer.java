@@ -66,7 +66,7 @@ public class DFSServer extends UnicastRemoteObject implements ServerInterface {
 	public boolean upload(String clientName, String filename, FileContents contents)
 			throws RemoteException {
 		CachedFile file = getCachedFile(filename);
-		System.out.println(String.format("Uploading file \"%s\".", filename));
+		System.out.println(String.format("Uploading file \"%s\" from \"%s\".", filename, clientName));
 		return file.updateContents(clientName, contents);
 	}
 
