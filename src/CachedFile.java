@@ -73,7 +73,7 @@ public class CachedFile {
 		return new FileContents(data);
 	}
 
-	public synchronized boolean updateContents(String clientName, FileContents contents)
+	public boolean updateContents(String clientName, FileContents contents)
 			throws RemoteException {
 		System.out.println("Update from <" + clientName + "> for file <" + storedFile.getName() + ">. Current owner is <" + (owner == null ? "-" : owner.getName()) + ">");
 		if (owner == null && owner.getName().equals(clientName)) {
@@ -88,7 +88,9 @@ public class CachedFile {
 		owner = null;
 		data = contents.get();
 		(new AsyncFileWriter(storedFile, data)).start();
-		notifyAll();
+		synchronized (this) {
+			notifyAll();
+		}
 		System.out.println("Finished update contents from <" + clientName + ">");
 		return true;
 	}
