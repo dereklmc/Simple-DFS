@@ -138,7 +138,7 @@ public class DFSServer extends UnicastRemoteObject implements ServerInterface {
 					// TODO cleanup
 					System.exit(0);
 				} else if (nextAction.equals("list")) {
-					dfs.printReaders();
+					dfs.displayInfo();
 				}
 			}
 		} catch (Exception e) {
