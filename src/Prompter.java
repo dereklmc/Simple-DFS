@@ -78,7 +78,7 @@ public class Prompter {
 			String choiceDisplay = String.format(" [%s] %s", i, options[i]);
 			System.out.println(choiceDisplay);
 		}
-		String choice = prompt("Choice? (select number) : ");
+		String choice = prompt("Choice? (select number)");
 		return Integer.parseInt(choice);
 	}
 	
