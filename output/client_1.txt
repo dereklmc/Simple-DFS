@@ -1,0 +1,73 @@
+[dlm18@uw1-320-20 Simple-DFS]$ ./runClient.sh $UW19
+
+
+
+
+
+Connecting to server ...
+Starting client ...
+Do you want to exit?(y/n): n
+FileClient: Next file to open
+Filename: demoA.txt
+How(r/w): r
+Editor
+ [0] vim
+ [1] gvim
+ [2] emacs
+Choice? (select number): 0
+Do you want to exit?(y/n): n
+FileClient: Next file to open
+Filename: demoA.txt
+How(r/w): w
+Editor
+ [0] vim
+ [1] gvim
+ [2] emacs
+Choice? (select number): 0
+Do you want to exit?(y/n): n
+FileClient: Next file to open
+Filename: demoA.txt
+How(r/w): r
+Editor
+ [0] vim
+ [1] gvim
+ [2] emacs
+Choice? (select number): 0
+Do you want to exit?(y/n): n
+FileClient: Next file to open
+Filename: demoB.txt
+How(r/w): w
+Editor
+ [0] vim
+ [1] gvim
+ [2] emacs
+Choice? (select number): 0
+Do you want to exit?(y/n): n
+FileClient: Next file to open
+Filename: demoA.txt
+How(r/w): w
+Editor
+ [0] vim
+ [1] gvim
+ [2] emacs
+Choice? (select number): 0
+Do you want to exit?(y/n): n
+FileClient: Next file to open
+Filename: demoA.txt
+How(r/w): r
+Editor
+ [0] vim
+ [1] gvim
+ [2] emacs
+Choice? (select number): 0
+Do you want to exit?(y/n): n
+FileClient: Next file to open
+Filename: demoB.txt
+How(r/w): w
+Editor
+ [0] vim
+ [1] gvim
+ [2] emacs
+Choice? (select number): 0
+Do you want to exit?(y/n): [dlm18@uw1-320-20 Simple-DFS]$ 
+
