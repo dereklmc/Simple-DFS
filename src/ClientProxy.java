@@ -6,14 +6,21 @@ import java.rmi.RemoteException;
 
 /**
  * Establishes a connection to a remote client object.
- * @author derek
- *
+ * 
+ * Functions as a proxy to the remote client. Used instead of a bare ClientInterface
+ * to store additional information about the client as well as encapsulate the process
+ * of connecting to the client.
  */
 public class ClientProxy implements ClientInterface {
 	
+    // Name of the client
 	private String name;
+    // Reference to the remote client
 	private ClientInterface client;
-
+    
+    /**
+     * Constructs object for client at a given address with a given port.
+     */
 	public ClientProxy(String address, String port) throws MalformedURLException, RemoteException, NotBoundException {
 		name = address;
 		
@@ -21,6 +28,9 @@ public class ClientProxy implements ClientInterface {
 		client = (ClientInterface) Naming.lookup(rmiClientAddress);
 	}
 	
+    /**
+     * Constructs an object for an existing reference to a remote client with a given client name.
+     */
 	public ClientProxy(String name, ClientInterface client) {
 		this.name = name;
 		this.client = client;
@@ -36,6 +46,9 @@ public class ClientProxy implements ClientInterface {
 		return client.writeback();
 	}
 
+    /**
+     * Returns the name of the client.
+     */
 	public String getName() {
 		return name;
 	}
