@@ -68,6 +68,8 @@ public class DFSServer extends UnicastRemoteObject implements ServerInterface {
 				System.out.println("Registering Writer");
 				file.registerWriter(client);
 			}
+			System.out.println("Sending to client <" + clientName + "> contents:");
+			System.out.println(new String(file.getContents().get()));
 			return file.getContents();
 		} catch (IllegalArgumentException e) {
 			throw new RemoteException("Bad request!", e);
@@ -89,7 +91,8 @@ public class DFSServer extends UnicastRemoteObject implements ServerInterface {
 	public boolean upload(String clientName, String filename, FileContents contents)
 			throws RemoteException {
 		CachedFile file = getCachedFile(filename);
-		System.out.println(String.format("Uploading file \"%s\" from \"%s\".", filename, clientName));
+		System.out.println(String.format("Uploading file \"%s\" from \"%s\". Contents:", filename, clientName));
+		System.out.println(new String(contents.get()));
 		return file.updateContents(clientName, contents);
 	}
     
@@ -138,7 +141,7 @@ public class DFSServer extends UnicastRemoteObject implements ServerInterface {
 					// TODO cleanup
 					System.exit(0);
 				} else if (nextAction.equals("list")) {
-					dfs.printReaders();
+					dfs.displayInfo();
 				}
 			}
 		} catch (Exception e) {
