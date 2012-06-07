@@ -1,0 +1,176 @@
+Script started on Thu 07 Jun 2012 07:02:31 AM PDT
+
+]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ 
+]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ ./compile
+Compiling java...
+running rmi compiler...
+DONE
+]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ ./[K[K>test[K[K[K[K/tmp/t[KdemoA.txt
+]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ >/tmp/t[KdemoB.txt
+]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ ./runServer.[K.sh
+[H[2JStarting server...
+Server started.
+Downloading file "demoA.txt" in mode [r] to client "uw1-320-20"
+	File not cached. Caching file. 
+Registering Reader
+Sending to client <uw1-320-20> contents:
+
+list
+=== demoA.txt ===
+$ Owned by "-"
+# uw1-320-20
+=== *** ===
+
+Downloading file "demoA.txt" in mode [w] to client "uw1-320-20"
+Registering Writer
+New owner not null: true
+Sending to client <uw1-320-20> contents:
+
+list
+=== demoA.txt ===
+$ Owned by "uw1-320-20"
+=== *** ===
+
+Uploading file "demoA.txt" from "uw1-320-20". Contents:
+xyz
+
+Update from <uw1-320-20> for file <demoA.txt>. Current owner is <uw1-320-20>
+Invalidating readers for file previously owned by <uw1-320-20>
+Finished update contents from <uw1-320-20>
+Downloading file "demoB.txt" in mode [w] to client "uw1-320-20"
+	File not cached. Caching file. 
+Registering Writer
+New owner not null: true
+Sending to client <uw1-320-20> contents:
+
+Downloading file "demoA.txt" in mode [r] to client "uw1-320-21"
+Registering Reader
+Sending to client <uw1-320-21> contents:
+xyz
+
+Downloading file "demoA.txt" in mode [r] to client "uw1-320-22"
+Registering Reader
+Sending to client <uw1-320-22> contents:
+xyz
+
+list
+=== demoA.txt ===
+$ Owned by "-"
+# uw1-320-21
+# uw1-320-22
+=== *** ===
+=== demoB.txt ===
+$ Owned by "uw1-320-20"
+=== *** ===
+
+Uploading file "demoB.txt" from "uw1-320-20". Contents:
+123
+
+Update from <uw1-320-20> for file <demoB.txt>. Current owner is <uw1-320-20>
+Invalidating readers for file previously owned by <uw1-320-20>
+Finished update contents from <uw1-320-20>
+Downloading file "demoA.txt" in mode [w] to client "uw1-320-20"
+Registering Writer
+New owner not null: true
+Sending to client <uw1-320-20> contents:
+xyz
+
+Downloading file "demoA.txt" in mode [w] to client "uw1-320-21"
+Registering Writer
+RegisterWrite for <uw1-320-21> Waiting for writeback from "uw1-320-20"
+Uploading file "demoA.txt" from "uw1-320-20". Contents:
+xyz?!
+
+Update from <uw1-320-20> for file <demoA.txt>. Current owner is <uw1-320-20>
+Invalidating readers for file previously owned by <uw1-320-20>
+Invalidating reader <ClientProxy@e6ff0d> for file previously owned by <uw1-320-20>
+Finished update contents from <uw1-320-20>
+Writeback complete. Continue down for <uw1-320-21>
+New owner not null: true
+Sending to client <uw1-320-21> contents:
+xyz?!
+
+list
+=== demoA.txt ===
+$ Owned by "uw1-320-21"
+# uw1-320-20
+=== *** ===
+=== demoB.txt ===
+$ Owned by "-"
+=== *** ===
+
+Downloading file "demoA.txt" in mode [r] to client "uw1-320-22"
+Registering Reader
+Sending to client <uw1-320-22> contents:
+xyz?!
+
+list
+=== demoA.txt ===
+$ Owned by "uw1-320-21"
+# uw1-320-20
+# uw1-320-22
+=== *** ===
+=== demoB.txt ===
+$ Owned by "-"
+=== *** ===
+
+Downloading file "demoB.txt" in mode [w] to client "uw1-320-20"
+Registering Writer
+New owner not null: true
+Sending to client <uw1-320-20> contents:
+123
+
+Uploading file "demoA.txt" from "uw1-320-21". Contents:
+xyz?!abc
+
+Update from <uw1-320-21> for file <demoA.txt>. Current owner is <uw1-320-21>
+Invalidating readers for file previously owned by <uw1-320-21>
+Invalidating reader <ClientProxy@5e176f> for file previously owned by <uw1-320-21>
+Finished update contents from <uw1-320-21>
+Downloading file "demoB.txt" in mode [w] to client "uw1-320-21"
+Registering Writer
+RegisterWrite for <uw1-320-21> Waiting for writeback from "uw1-320-20"
+Downloading file "demoB.txt" in mode [w] to client "uw1-320-22"
+Registering Writer
+RegisterWrite for <uw1-320-22> Waiting for writeback from "uw1-320-20"
+Uploading file "demoB.txt" from "uw1-320-20". Contents:
+123pqr
+
+Update from <uw1-320-20> for file <demoB.txt>. Current owner is <uw1-320-20>
+Invalidating readers for file previously owned by <uw1-320-20>
+Writeback complete. Continue down for <uw1-320-22>
+New owner not null: true
+Sending to client <uw1-320-22> contents:
+123pqr
+
+Writeback complete. Continue down for <uw1-320-21>
+RegisterWrite for <uw1-320-21> Waiting for writeback from "uw1-320-22"
+Finished update contents from <uw1-320-20>
+Uploading file "demoB.txt" from "uw1-320-22". Contents:
+123pqr456
+
+Update from <uw1-320-22> for file <demoB.txt>. Current owner is <uw1-320-22>
+Invalidating readers for file previously owned by <uw1-320-22>
+Invalidating reader <ClientProxy@93d6bc> for file previously owned by <uw1-320-22>
+Finished update contents from <uw1-320-22>
+Writeback complete. Continue down for <uw1-320-21>
+New owner not null: true
+Sending to client <uw1-320-21> contents:
+123pqr456
+
+list
+=== demoA.txt ===
+$ Owned by "-"
+=== *** ===
+=== demoB.txt ===
+$ Owned by "uw1-320-21"
+# uw1-320-22
+=== *** ===
+
+]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ cat /t[Kdemo[K[K[K[K[Ktm[K[K/tmp/demoA.txt
+xyz?!abc
+]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ cat /tmp/demoB.txt
+123pqr456
+]0;dlm18@uw1-320-19:~/repos/Simple-DFS[dlm18@uw1-320-19 Simple-DFS]$ exit
+
+Script done on Thu 07 Jun 2012 07:14:16 AM PDT
