@@ -1,10 +1,11 @@
-rm *.class
+rm bin/*.class
 
 echo "Compiling java..."
-javac *.java
+javac src/*.java -d bin
 
+cd bin
 echo "running rmi compiler..."
-rmic DFSServer
+rmic DFSServer 
 rmic DFSClient
 
 echo "DONE"
