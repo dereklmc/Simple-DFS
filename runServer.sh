@@ -1,3 +1,4 @@
+cd bin
 clear
 rmiregistry $DLMPORT &
 RMIREG_PID=$!
