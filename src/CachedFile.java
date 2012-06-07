@@ -64,7 +64,7 @@ public class CachedFile {
      * Registers a client as a reader for this file, granting them read permissions.
      */
 	public synchronized void registerReader(ClientProxy client) {
-		readers.add(client);
+		addReader(client);
 	}
     
     /**
@@ -158,6 +158,7 @@ public class CachedFile {
 					+ "> for file previously owned by <" + clientName + ">");
 			reader.invalidate();
 		}
+        reader.add(client);
 		owner = null;
 		data = contents.get();
 		(new AsyncFileWriter(storedFile, data)).start();
@@ -186,4 +187,11 @@ public class CachedFile {
 		}
 		return owner.getName();
 	}
-}
+
+    /**
+     * Adds a client as a reader if the client is not alread a reader.
+     */
+    private void addReader(ClientProxy client) {
+        if (!readers.contains(client))
+            readers.add(client):
+}   }
