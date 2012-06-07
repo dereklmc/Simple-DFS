@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.List;
 
 
 public class CachedFile {
@@ -50,6 +52,7 @@ public class CachedFile {
 		if (!client.equals(owner)) {
 			while (owner != null) {
 				try {
+					System.out.println("Waiting for writeback from \"" + owner.getName() + "\"");
 					owner.writeback();
 					wait();
 				} catch (InterruptedException e) {
@@ -82,5 +85,16 @@ public class CachedFile {
 		(new AsyncFileWriter(storedFile, data)).start();
 		notifyAll();
 		return true;
+	}
+
+	public List<ClientProxy> getReaders() {
+		return Collections.unmodifiableList(readers);
+	}
+
+	public String getOwnerName() {
+		if (owner == null) {
+			return "-";
+		}
+		return owner.getName();
 	}
 }
