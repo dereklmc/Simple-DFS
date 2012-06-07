@@ -23,6 +23,12 @@ public class DFSServer extends UnicastRemoteObject implements ServerInterface {
 	@Override
 	public FileContents download(String clientName, String filename, String mode)
 			throws RemoteException {
+		
+		for (CachedFile file : fileCache) {
+			if (!file.getName().equals(filename))
+				file.removeReader(clientName);
+		}
+		
 		CachedFile file = getCachedFile(filename);
 		System.out.println(String.format("Downloading file \"%s\" in mode [%s]. ", filename, mode));
 		if (file == null) {

@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
-
+import java.util.Iterator;
 
 
 public class CachedFile {
@@ -33,6 +33,15 @@ public class CachedFile {
 
 	public synchronized void registerReader(ClientProxy client) {
 		readers.add(client);
+	}
+	
+	public synchronized void removeReader(String clientName) {
+		Iterator<ClientProxy> it = readers.iterator();
+		while (it.hasNext()) {
+			ClientProxy reader = it.next();
+			if (reader.getName().equals(clientName))
+				it.remove();
+		}
 	}
 
 	public synchronized void registerWriter(ClientProxy client) throws RemoteException {
